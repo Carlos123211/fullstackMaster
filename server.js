@@ -6,8 +6,8 @@ const config = require('./db');
 const PORT = 4000;
 const client = mongodb.MongoClient;
 
-client.connect(config.DB, function(err, db) {
-    if(err) {
+client.connect(config.DB, { useNewUrlParser: true }, function (err, db) {
+    if (err) {
         console.log('database is not connected')
     }
     else {
@@ -15,10 +15,10 @@ client.connect(config.DB, function(err, db) {
     }
 });
 
-app.get('/', function(req, res) {
-    res.json({"hello": "world"});
+app.get('/', function (req, res) {
+    res.json({ "hello": "world" });
 });
 
-app.listen(PORT, function(){
-    console.log('Your node js server is running on PORT:',PORT);
+app.listen(PORT, function () {
+    console.log('Your node js server is running on PORT:', PORT);
 });
