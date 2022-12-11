@@ -23,11 +23,23 @@ client.connect(config.DB, { useNewUrlParser: true }, function (err, db) {
     }
 });
 
+//Get by default, return an object saying hello
+
 app.get('/', (req, resp) => {
     resp.json({ "hello": "world" });
 });
 
-app.get('/collections', async (req, resp) => {
+//Get a Collection based on queryparams
+app.get('/collection', async (req, resp) => {
+    const documents = dbo.collection('calls');
+    const call = await documents.find(req.query)
+
+    resp.status(200).json(call)
+
+});
+
+//Get all Collections
+app.get('/allcollections', async (req, resp) => {
     const documents = dbo.collection('calls');
     //Show all documents in the collection
     const cursor = documents.find({})
@@ -39,9 +51,10 @@ app.get('/collections', async (req, resp) => {
     cursor.toArray().then((ans) => {
         resp.send(ans)
     })
-})
 
+});
 
+//Get and Update or Create a Collection
 app.put('/collections/:id', async (req, resp) => {
     const hex = /[0-9A-Fa-f]{6}/g
     const query = {
@@ -60,7 +73,7 @@ app.put('/collections/:id', async (req, resp) => {
         if (hex.test(req.params.id)) {
             documents.findOne({ _id: mongodb.ObjectId(req.params?.id) }).then((doc) => {
                 if (doc) {
-                    documents.update({ _id: mongodb.ObjectId(req.params?.id) }, { $set: query })
+                    documents.updateOne({ _id: mongodb.ObjectId(req.params?.id) }, { $set: query })
                         .then((docu) => {
                             console.log(docu)
                             resp.status(200).send("Updated Successfully")
@@ -80,14 +93,8 @@ app.put('/collections/:id', async (req, resp) => {
             })
         }
     }
-
-
-
-    //const calls = await documents.findOne(query, {});
-
-    //res.send(calls)
-})
-
+});
+//Create a new Collection
 app.post('/create', (req, resp) => {
 
     let myobj = {
@@ -103,7 +110,13 @@ app.post('/create', (req, resp) => {
     })
 
     resp.send('Added successfully')
+});
+
+//Delete a Collection
+app.delete('/collection', async (req, resp) => {
+
 })
+
 
 app.listen(PORT, function () {
 
