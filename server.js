@@ -131,7 +131,11 @@ app.delete('/collection', async (req, resp) => {
 
     const documents = dbo.collection('calls');
     documents.deleteMany(query).then(res => {
-        resp.send(`Deleted Documents ${res.deletedCount}`)
+        if(res.deletedCount === 0){
+            resp.status(204)
+        }else{
+            resp.status(200).send(`Deleted Documents ${res.deletedCount}`)
+        }
     })
 
 })
