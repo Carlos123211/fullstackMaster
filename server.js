@@ -115,6 +115,25 @@ app.post('/create', (req, resp) => {
 //Delete a Collection
 app.delete('/collection', async (req, resp) => {
 
+    const query = {
+        message: req.query?.message,
+        scope: req.query?.scope,
+        host: req.query?.host,
+        date: req.query?.message,
+        location: req.query?.location
+    }
+
+    Object.keys(query).forEach(key => {
+        if (query[key] === undefined) {
+            delete query[key]
+        }
+    });
+
+    const documents = dbo.collection('calls');
+    documents.deleteMany(query).then(res => {
+        resp.send(`Deleted Documents ${res.deletedCount}`)
+    })
+
 })
 
 
